@@ -1,0 +1,13 @@
+# Local dependencies and build output
+node_modules/
+*.class
+*.jar
+__pycache__/
+*.py[cod]
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
