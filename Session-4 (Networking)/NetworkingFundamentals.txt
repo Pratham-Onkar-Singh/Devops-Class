@@ -1,0 +1,8 @@
+Networking Homework Tasks
+
+Task 1
+  Practice commands and repo shared in devops-hero github repo.
+Task 2
+  Create an empty Markdown (.md) file.
+  Execute the networking commands and add the output/screenshots to the file.
+  Add a short explanation of what you understood about each command.
