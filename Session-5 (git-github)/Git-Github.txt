@@ -1,0 +1,18 @@
+Git Homework Tasks
+Task 1:
+  git commit -a -m
+  Practice git commit -a -m "message".
+  Understand the difference between git commit -a -m and git commit -m.
+  Test both commands and observe the difference.
+Task 2: Git Cherry-Pick
+  Create 2–4 commits in the main branch.
+  Use git log to view the commits.
+  Create a new branch.
+  Make 2–3 commits in the new branch.
+  Use git log to identify a specific commit.
+  Cherry-pick one specific commit from the new branch into the main branch.
+  Verify that the selected commit/change is now available in the main branch.
+  Submission
+  Take screenshots of your work or create an .md file showing the commands and output.
+  Upload the screenshots or .md file to the GitHub repository.
+
