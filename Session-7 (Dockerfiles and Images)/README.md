@@ -60,7 +60,7 @@ Open <http://localhost:8082> in a browser.
 
 ## Cleanup
 
-After taking all screenshots, stop and remove the containers:
+You can stop and remove the containers using this command:
 
 ```bash
 docker rm -f node-multistage-container python-container java-container
