@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-reporter
+  labels:
+    app: node-reporter
+spec:
+  selector:
+    matchLabels:
+      app: node-reporter
+  template:
+    metadata:
+      labels:
+        app: node-reporter
+    spec:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: reporter
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - while true; do echo "node agent: $(hostname)"; sleep 30; done
