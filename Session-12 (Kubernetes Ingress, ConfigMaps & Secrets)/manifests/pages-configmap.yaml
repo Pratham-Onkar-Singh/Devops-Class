@@ -1,0 +1,30 @@
+# Each ConfigMap supplies the index.html mounted by one NGINX deployment.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-page
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+      <head><title>Frontend</title></head>
+      <body style="font-family: sans-serif; text-align: center; margin-top: 80px;">
+        <h1>This is the FRONTEND</h1>
+        <p>Reached through the Ingress on path /</p>
+      </body>
+    </html>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-page
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+      <head><title>Backend</title></head>
+      <body style="font-family: sans-serif; text-align: center; margin-top: 80px;">
+        <h1>This is the BACKEND</h1>
+        <p>Reached through the Ingress on path /api</p>
+      </body>
+    </html>

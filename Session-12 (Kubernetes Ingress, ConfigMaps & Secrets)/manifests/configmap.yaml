@@ -1,0 +1,9 @@
+# Non-sensitive application configuration.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_NAME: "Kubernetes Ingress Practice"
+  APP_ENV: "development"
+  WELCOME_MESSAGE: "Hello from a ConfigMap"
