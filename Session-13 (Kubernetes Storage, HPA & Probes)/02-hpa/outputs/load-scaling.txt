@@ -1,0 +1,18 @@
+Command: kubectl -n hpa-practice get hpa,pods
+
+NAME                                           REFERENCE             TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/hpa-demo   Deployment/hpa-demo   cpu: 78%/50%   1         5         4          7m34s
+
+NAME                                  READY   STATUS    RESTARTS   AGE
+pod/hpa-demo-866cb849fd-kk8g2         1/1     Running   0          7m34s
+pod/hpa-demo-866cb849fd-rh927         1/1     Running   0          33s
+pod/hpa-demo-866cb849fd-vv9l2         1/1     Running   0          33s
+pod/hpa-demo-866cb849fd-xpk9x         1/1     Running   0          33s
+pod/hpa-demo-866cb849fd-zsz7g         1/1     Running   0          3s
+
+Command: kubectl -n hpa-practice describe hpa hpa-demo
+
+Metrics:  resource cpu on pods: 78% (78m) / 50%
+Deployment pods: 4 current / 5 desired
+Event: SuccessfulRescale  New size: 4; reason: cpu resource utilization (percentage of request) above target
+Event: SuccessfulRescale  New size: 5; reason: cpu resource utilization (percentage of request) above target

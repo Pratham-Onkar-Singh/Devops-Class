@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dynamic-pvc
+  namespace: volume-practice
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: course-standard
+  resources:
+    requests:
+      storage: 50Mi

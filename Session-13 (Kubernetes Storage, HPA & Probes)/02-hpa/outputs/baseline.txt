@@ -1,0 +1,12 @@
+Command: kubectl -n hpa-practice top pods
+
+NAME                        CPU(cores)   MEMORY(bytes)
+hpa-demo-866cb849fd-kk8g2   0m           12Mi
+
+Command: kubectl -n hpa-practice get hpa,pods
+
+NAME                                           REFERENCE             TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/hpa-demo   Deployment/hpa-demo   cpu: 0%/50%   1         5         1          4m55s
+
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/hpa-demo-866cb849fd-kk8g2   1/1     Running   0          4m55s

@@ -1,0 +1,18 @@
+Command: kubectl -n production-webapp exec deployment/web-app -- cat /data/student.txt
+
+session-13-persistent-data
+
+The original Pods were deleted and replacement Pods became Ready. The same command then returned:
+
+session-13-persistent-data
+
+Command: kubectl -n production-webapp get pods,pvc,hpa
+
+NAME                           READY   STATUS    RESTARTS   AGE
+pod/web-app-656966ddb8-mcbhd   1/1     Running   0          10s
+pod/web-app-656966ddb8-z6r56   1/1     Running   0          10s
+
+NAME                             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS
+persistentvolumeclaim/web-data   Bound    pvc-9345c475-0b66-4e11-83f2-6aeed6c9ccab   500Mi      RWO            standard
+
+Configured HTTP probes: startup, readiness, and liveness on port 80.
