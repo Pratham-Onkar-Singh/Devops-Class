@@ -36,7 +36,7 @@ jobs:
         run: python -m pytest -v --junitxml=test-results.xml
 
       - name: SAST with Bandit
-        run: bandit -r 'Session-21 (Final DevOps Project & Troubleshooting)/application' -c 'Session-21 (Final DevOps Project & Troubleshooting)/security/.bandit' -f json -o bandit-report.json
+        run: bandit -r 'Session-21 (Final DevOps Project & Troubleshooting)/application' -c 'Session-21 (Final DevOps Project & Troubleshooting)/security/.bandit' -ll -f json -o bandit-report.json
 
       - name: SCA with pip-audit
         working-directory: 'Session-21 (Final DevOps Project & Troubleshooting)/application'

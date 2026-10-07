@@ -37,7 +37,7 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}/application
         run: python -m pytest -v --junitxml=test-results.xml
       - name: SAST
-        run: bandit -r "$PROJECT_DIR/application" -c "$PROJECT_DIR/security/.bandit" -f json -o bandit-report.json
+        run: bandit -r "$PROJECT_DIR/application" -c "$PROJECT_DIR/security/.bandit" -ll -f json -o bandit-report.json
       - name: SCA
         working-directory: ${{ env.PROJECT_DIR }}/application
         run: pip-audit -r requirements.txt -f json -o ../security/pip-audit.json
