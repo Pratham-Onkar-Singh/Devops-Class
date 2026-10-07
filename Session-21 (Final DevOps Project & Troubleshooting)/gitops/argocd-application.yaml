@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: final-devops-taskboard
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Pratham-Onkar-Singh/Devops-Class.git
+    targetRevision: main
+    path: Session-21 (Final DevOps Project & Troubleshooting)/kubernetes
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: final-devops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

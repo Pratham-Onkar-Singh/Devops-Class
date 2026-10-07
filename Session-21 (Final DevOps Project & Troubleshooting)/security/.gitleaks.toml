@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Demo-only placeholders are not credentials"
+paths = ["images/", "troubleshooting/broken/"]

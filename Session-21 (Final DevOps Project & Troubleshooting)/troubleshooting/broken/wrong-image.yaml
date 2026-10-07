@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskboard-broken-image
+  namespace: final-devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taskboard-broken-image
+  template:
+    metadata:
+      labels:
+        app: taskboard-broken-image
+    spec:
+      containers:
+        - name: taskboard
+          image: final-devops-taskboard:does-not-exist
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

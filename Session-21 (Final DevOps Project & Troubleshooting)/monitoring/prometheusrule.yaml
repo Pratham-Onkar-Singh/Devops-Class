@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: taskboard-alerts
+  namespace: final-devops
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: taskboard.rules
+      rules:
+        - alert: TaskboardReplicasUnavailable
+          expr: kube_deployment_status_replicas_available{namespace="final-devops",deployment="taskboard"} < 2
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: Taskboard replicas are unavailable
+            description: The Taskboard deployment has fewer than two available replicas.
+        - alert: TaskboardHealthTelemetryMissing
+          expr: absent(taskboard_last_health_check_unixtime)
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: Taskboard health telemetry is missing
+            description: Prometheus is not receiving the application's health metric.

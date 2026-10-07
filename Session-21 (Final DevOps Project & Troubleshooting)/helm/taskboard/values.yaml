@@ -1,0 +1,40 @@
+replicaCount: 2
+
+image:
+  repository: final-devops-taskboard
+  tag: local
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  host: taskboard.local
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+
+persistence:
+  enabled: true
+  size: 1Gi
+
+config:
+  APP_VERSION: "1.0.0"
+  LOG_LEVEL: "INFO"
+
+secret:
+  APP_SECRET: "replace-in-production"

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskboard-broken-config
+  namespace: final-devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taskboard-broken-config
+  template:
+    metadata:
+      labels:
+        app: taskboard-broken-config
+    spec:
+      containers:
+        - name: taskboard
+          image: final-devops-taskboard:local
+          envFrom:
+            - configMapRef:
+                name: config-does-not-exist

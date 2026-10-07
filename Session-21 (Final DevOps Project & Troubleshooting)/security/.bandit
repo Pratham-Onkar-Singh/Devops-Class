@@ -1,0 +1,4 @@
+[bandit]
+exclude = tests,.venv
+severity = medium
+confidence = medium

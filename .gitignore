@@ -9,6 +9,8 @@ __pycache__/
 .coverage
 htmlcov/
 test-results.xml
+bandit-report.json
+pip-audit.json
 *.log
 *.egg-info/
 

@@ -1,0 +1,17 @@
+{
+  "title": "Final DevOps Taskboard",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "HTTP requests per second",
+      "targets": [{"expr": "sum(rate(taskboard_http_requests_total[5m]))", "legendFormat": "requests/s"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Available replicas",
+      "targets": [{"expr": "kube_deployment_status_replicas_available{namespace=\"final-devops\",deployment=\"taskboard\"}", "legendFormat": "replicas"}]
+    }
+  ]
+}
