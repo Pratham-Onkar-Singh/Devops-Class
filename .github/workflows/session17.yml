@@ -44,7 +44,7 @@ jobs:
         run: python -m compileall -q app.py
       - name: Unit tests
         working-directory: Session-17 (Devsecops)
-        run: pytest -v --junitxml=test-results.xml
+        run: python -m pytest -v --junitxml=test-results.xml
       - name: Controlled security-gate demonstration
         if: ${{ inputs.gate_demo == true }}
         run: >-

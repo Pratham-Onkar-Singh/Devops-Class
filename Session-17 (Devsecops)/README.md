@@ -63,7 +63,7 @@ The successful deployment verification posts `6 × 3` and asserts that the retur
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
-pytest -v
+python -m pytest -v
 bandit -c security/bandit.yaml -q app.py
 pip-audit -r requirements.txt
 ```
