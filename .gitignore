@@ -15,4 +15,12 @@ test-results.xml
 # Local secrets and environment overrides
 .env
 .env.*
-.venv/
+
+# Terraform local state, plugin cache, and crash output
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+crash.*.log
