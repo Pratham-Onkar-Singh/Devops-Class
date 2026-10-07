@@ -1,0 +1,184 @@
+name: Session 17 Complete CI/CD DevSecOps
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'Session-17 (Devsecops)/**'
+      - '.github/workflows/session17.yml'
+  pull_request:
+    paths:
+      - 'Session-17 (Devsecops)/**'
+      - '.github/workflows/session17.yml'
+  workflow_dispatch:
+    inputs:
+      gate_demo:
+        description: Run a controlled CI failure to prove downstream gates are skipped
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_NAME: ghcr.io/pratham-onkar-singh/session-17-devsecops
+
+jobs:
+  security:
+    name: Build, test, and security scans
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: Session-17 (Devsecops)/requirements-dev.txt
+      - name: Install development dependencies
+        working-directory: Session-17 (Devsecops)
+        run: python -m pip install -r requirements-dev.txt
+      - name: Compile application
+        working-directory: Session-17 (Devsecops)
+        run: python -m compileall -q app.py
+      - name: Unit tests
+        working-directory: Session-17 (Devsecops)
+        run: pytest -v --junitxml=test-results.xml
+      - name: Controlled security-gate demonstration
+        if: ${{ inputs.gate_demo == true }}
+        run: >-
+          python -c 'raise SystemExit("Controlled gate failure: image build and deployment must be skipped")'
+      - name: SAST with Bandit
+        working-directory: Session-17 (Devsecops)
+        run: bandit -c security/bandit.yaml -q app.py -f json -o sast.json
+      - name: SCA with pip-audit
+        working-directory: Session-17 (Devsecops)
+        run: pip-audit -r requirements.txt -f json -o sca.json
+      - name: Secret scan with Gitleaks
+        run: >-
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.1
+          dir '/repo/Session-17 (Devsecops)' --redact --report-format json
+          --report-path /repo/secrets.json
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: session17-security-reports
+          path: |
+            Session-17 (Devsecops)/test-results.xml
+            Session-17 (Devsecops)/sast.json
+            Session-17 (Devsecops)/sca.json
+            secrets.json
+          if-no-files-found: ignore
+
+  image:
+    name: Build, scan, and publish image
+    needs: security
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+      - name: Build image for scanning
+        uses: docker/build-push-action@v7
+        with:
+          context: Session-17 (Devsecops)
+          file: Session-17 (Devsecops)/Dockerfile
+          load: true
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+      - name: Trivy image scan and security gate
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: json
+          output: image-scan.json
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+      - name: Upload image scan report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: session17-image-scan
+          path: image-scan.json
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push approved image
+        uses: docker/build-push-action@v7
+        with:
+          context: Session-17 (Devsecops)
+          file: Session-17 (Devsecops)/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:latest
+      - name: Upload application artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: session17-application
+          path: |
+            Session-17 (Devsecops)/app.py
+            Session-17 (Devsecops)/requirements.txt
+
+  deploy:
+    name: Deploy and verify to Kubernetes
+    needs: image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+      - name: Create temporary Kind cluster
+        run: |
+          curl -fsSL https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64 -o kind
+          chmod +x kind
+          sudo mv kind /usr/local/bin/kind
+          kind create cluster --wait 120s
+      - name: Create GHCR pull secret
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          kubectl create namespace devsecops-demo
+          kubectl -n devsecops-demo create secret docker-registry ghcr \
+            --docker-server=ghcr.io --docker-username="${{ github.actor }}" \
+            --docker-password="$REGISTRY_TOKEN"
+      - name: Deploy approved image
+        env:
+          IMAGE: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+        run: |
+          sed "s|IMAGE_PLACEHOLDER|$IMAGE|" 'Session-17 (Devsecops)/kubernetes/deployment.yaml' | kubectl -n devsecops-demo apply -f -
+          kubectl -n devsecops-demo apply -f 'Session-17 (Devsecops)/kubernetes/service.yaml'
+          kubectl -n devsecops-demo rollout status deployment/devsecops-demo --timeout=180s
+          kubectl -n devsecops-demo get pods,service
+      - name: Verify health and application behavior
+        run: |
+          kubectl -n devsecops-demo port-forward service/devsecops-demo 5000:5000 > port-forward.log 2>&1 &
+          for attempt in $(seq 1 30); do curl -fsS http://127.0.0.1:5000/ready && break || sleep 1; done
+          curl -fsS http://127.0.0.1:5000/health
+          curl -fsS -X POST http://127.0.0.1:5000/api/calculate \
+            -H 'Content-Type: application/json' \
+            -d '{"a":6,"b":3,"operation":"multiply"}' | tee deployment-result.json
+          python -c 'import json; assert json.load(open("deployment-result.json"))["result"] == 18'
+          kubectl -n devsecops-demo logs deployment/devsecops-demo --tail=20
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: session17-deployment
+          path: |
+            deployment-result.json
+            port-forward.log
+      - name: Remove temporary cluster
+        if: always()
+        run: kind delete cluster

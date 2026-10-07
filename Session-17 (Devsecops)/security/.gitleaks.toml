@@ -1,0 +1,10 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Safe test and documentation values only"
+paths = [
+  '''\.pytest_cache/''',
+  '''images/''',
+  '''outputs/'''
+]

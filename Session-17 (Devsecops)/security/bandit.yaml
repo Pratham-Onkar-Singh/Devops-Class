@@ -1,0 +1,5 @@
+tests: []
+skips:
+  - B101
+  # The container must bind to all interfaces so the Kubernetes Service can reach it.
+  - B104
