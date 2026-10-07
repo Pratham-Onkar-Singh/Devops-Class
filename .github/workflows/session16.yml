@@ -16,7 +16,8 @@ permissions:
   contents: read
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/session-16-ci-cd-demo
+  # GHCR repository names must be lowercase; the GitHub owner is mixed-case.
+  IMAGE_NAME: ghcr.io/pratham-onkar-singh/session-16-ci-cd-demo
 
 jobs:
   ci:
@@ -24,9 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.13'
           cache: pip
@@ -42,7 +43,7 @@ jobs:
         run: pytest -v --junitxml=test-results.xml
       - name: Upload test report artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: session16-test-report
           path: Session-16 (Github Actions)/test-results.xml
@@ -58,15 +59,15 @@ jobs:
       packages: write
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push immutable image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: Session-16 (Github Actions)
           file: Session-16 (Github Actions)/Dockerfile
@@ -75,7 +76,7 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ env.IMAGE_NAME }}:latest
       - name: Upload application artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: session16-application
           path: |
@@ -91,7 +92,7 @@ jobs:
       packages: read
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Create temporary Kubernetes cluster
         uses: helm/kind-action@v1
         with:
@@ -124,7 +125,7 @@ jobs:
           python -c 'import json; assert json.load(open("deployment-result.json"))["result"] == 18'
       - name: Upload deployment evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: session16-deployment-evidence
           path: |
