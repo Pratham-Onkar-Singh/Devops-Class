@@ -5,7 +5,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && rm -rf /root/.cache
+# pip, setuptools, and wheel are build tooling and are not needed at runtime.
+RUN pip install --no-cache-dir -r requirements.txt \
+    && python -m pip uninstall -y pip setuptools wheel \
+    && rm -rf /root/.cache /tmp/*
 COPY app.py .
 
 EXPOSE 5000
