@@ -105,6 +105,3 @@ The successful Actions run completed all three jobs: CI tests passed, the image 
 
 The workflow needs no manually created registry password. GitHub supplies `GITHUB_TOKEN`; the workflow grants `packages: write` to the publish job and `packages: read` to the deploy job. Repository Actions settings must allow the token to read/write packages when publishing to GHCR.
 
-## Cleanup
-
-The Kind cluster is temporary and the workflow removes it when the deploy job finishes. Local Docker and Python resources can be removed with the normal project cleanup commands.

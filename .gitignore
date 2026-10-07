@@ -1,1 +1,17 @@
 node_modules/
+
+# Python local environments and generated test/build files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+test-results.xml
+*.log
+*.egg-info/
+
+# Local secrets and environment overrides
+.env
+.env.*
