@@ -92,3 +92,23 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ env.IMAGE_NAME }}:latest
           push: true
+
+  deploy:
+    name: Deploy to Kubernetes when configured
+    needs: image
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Deploy manifest when KUBE_CONFIG is available
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          if [ -z "$KUBE_CONFIG" ]; then
+            echo "KUBE_CONFIG is not configured; deployment is intentionally skipped."
+            exit 0
+          fi
+          mkdir -p "$HOME/.kube"
+          printf '%s' "$KUBE_CONFIG" > "$HOME/.kube/config"
+          kubectl apply -k "$PROJECT_DIR/kubernetes"
+          kubectl -n final-devops rollout status deployment/taskboard --timeout=180s
