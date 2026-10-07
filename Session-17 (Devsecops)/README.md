@@ -107,7 +107,3 @@ The successful run evidence shows the security job passing all scans, the image 
 The gate evidence shows a controlled failing CI gate with downstream image publishing and deployment skipped. The real Trivy gate is enforced separately with `exit-code: 1` for fixable HIGH/CRITICAL findings.
 
 ![Controlled pipeline gate evidence](images/s17-actions-gate.png)
-
-## Cleanup
-
-The workflow deletes its temporary Kind cluster with an `always()` cleanup step. Local Docker images and Python virtual environments can be removed using the normal project cleanup commands.
