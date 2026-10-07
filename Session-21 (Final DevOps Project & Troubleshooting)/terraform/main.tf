@@ -6,7 +6,7 @@ resource "aws_vpc" "final" {
   cidr_block           = "10.21.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
-  tags = { Name = "session21-vpc" }
+  tags                 = { Name = "session21-vpc" }
 }
 
 resource "aws_internet_gateway" "final" {
