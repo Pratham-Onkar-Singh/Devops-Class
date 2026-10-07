@@ -1,0 +1,3 @@
+Task Board is available through the {{ include "taskboard-chart.fullname" . }} Service.
+
+kubectl -n {{ .Release.Namespace }} port-forward service/{{ include "taskboard-chart.fullname" . }} 8081:80

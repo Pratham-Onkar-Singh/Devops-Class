@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "taskboard-chart.fullname" . }}
+  labels:
+    {{- include "taskboard-chart.labels" . | nindent 4 }}
+data:
+  index.html: |
+    <!doctype html>
+    <html><head><title>Task Board</title></head>
+    <body>
+      <h1>Task Board</h1>
+      <p>Environment: {{ .Values.environment }}</p>
+      <ul><li>Helm chart installed</li><li>Release versioned</li><li>Rollback verified</li></ul>
+    </body></html>
