@@ -15,3 +15,4 @@ test-results.xml
 # Local secrets and environment overrides
 .env
 .env.*
+.venv/
