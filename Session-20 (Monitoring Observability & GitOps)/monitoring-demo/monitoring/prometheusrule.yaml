@@ -1,0 +1,43 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: monitoring-demo-alerts
+  namespace: session20-observability
+  labels:
+    app.kubernetes.io/part-of: session20
+spec:
+  groups:
+    - name: session20.rules
+      rules:
+        - alert: MonitoringDemoHighCPU
+          expr: 100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]))) > 80
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High node CPU utilization
+            description: Node CPU utilization has been above 80% for five minutes.
+        - alert: MonitoringDemoHighMemory
+          expr: 100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 80
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High node memory utilization
+            description: Node memory utilization has been above 80% for five minutes.
+        - alert: MonitoringDemoUnavailable
+          expr: kube_deployment_status_replicas_available{deployment="monitoring-demo",namespace="session20-observability"} < 2
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: Monitoring demo replicas unavailable
+            description: Fewer than two monitoring demo replicas are available.
+        - alert: MonitoringDemoHealthProbeFailures
+          expr: absent(demo_last_health_check_unixtime)
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: Monitoring demo health telemetry is absent
+            description: No successful application health-check metric has been scraped.

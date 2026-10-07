@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: session20-monitoring-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Pratham-Onkar-Singh/Devops-Class.git
+    targetRevision: main
+    path: Session-20 (Monitoring Observability & GitOps)/monitoring-demo/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: session20-observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
